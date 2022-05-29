@@ -93,7 +93,6 @@ public class BankTransactionProcess {
                 singlePath.addAll(list);
                 singlePathIndex = getSingleIndex(requestArray, singlePath, 0);
             }
-
         }
         return singlePathIndex;
     }
@@ -114,22 +113,20 @@ public class BankTransactionProcess {
         boolean lengthCheck = source.size() > 0 && destination.size() > 0;
 
         if(lengthCheck && !source.equals(destination)) {
-            double sourceLineProbability = source.get(0).equals(requestArray[0]) ? childProbabilities.get(requestArray[0]) : Double.valueOf(childProbabilities.get(requestArray[0]) * childProbabilities.get(source.get(0)));
+            double sourceLineProbability = source.get(0).equals(requestArray[0]) ?
+                    childProbabilities.get(requestArray[0]) :
+                    childProbabilities.get(requestArray[0]) * childProbabilities.get(source.get(0));
 
-            double endLineProbability;
-            if(!destination.get(0).equals(requestArray[1])) {
-                endLineProbability = childProbabilities.get(requestArray[1]) * childProbabilities.get(destination.get(0));
-            } else {
-                endLineProbability = childProbabilities.get(destination.get(0));
-            }
+            double endLineProbability = !destination.get(0).equals(requestArray[1]) ?
+                    childProbabilities.get(requestArray[1]) * childProbabilities.get(destination.get(0)) :
+                    childProbabilities.get(destination.get(0));
+
             prob = sourceLineProbability * endLineProbability;
         } else if(lengthCheck && source.equals(destination)) {
             if(Arrays.stream(requestArray).anyMatch(x-> x.equals(source.get(0)))) {
                 int index = 0;
                 for (int i = 0; i < requestArray.length-1; i++) {
-                    if (!requestArray[i].equals(source.get(0))) {
-                        index = i;
-                    }
+                    if (!requestArray[i].equals(source.get(0))) index = i;
                 }
                 int singleIndex = getSingleIndex(requestArray, source, index);
                 return childProbabilities.get(source.get(singleIndex));
